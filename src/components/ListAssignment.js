@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {SERVER_URL} from '../constants';
 import {Link} from 'react-router-dom';
+import editAssignment from "./EditAssignment";
+import AddAssignment from "./AddAssignment";
+import EditAssignment from "./EditAssignment";
 
 
 function ListAssignment(props) {
@@ -23,6 +26,30 @@ function ListAssignment(props) {
      }) 
     .catch(err => console.error(err)); 
   }
+
+  const deleteAssignment = (event) => {
+      setMessage('');
+      const row_id = event.target.parentNode.parentNode.rowIndex - 1;
+
+      const assignmentId = assignments[row_id].id;
+
+      if(window.confirm('Are you sure you want to delete this assignment?')){
+          fetch(`${SERVER_URL}/assignment/${assignmentId}`, {
+              method: 'DELETE',
+          })
+              .then((response) => {
+                  if(response.ok){
+                      setMessage('Assignment Deleted');
+                      fetchAssignments();
+                  }else{
+                      console.error('Error deleting assignment: ', response.status);
+                  }
+          })
+              .catch((error) => {
+                  console.error('Error deleting assignment: ', error);
+              });
+      }
+  };
   
   
     const headers = ['Assignment Name', 'Course Title', 'Due Date', ' ', ' ', ' '];
@@ -47,12 +74,13 @@ function ListAssignment(props) {
                       <td>
                         <Link to={`/gradeAssignment/${assignments[idx].id}`} >Grade</Link>
                       </td>
-                      <td>Edit</td>
-                      <td>Delete</td>
+                        <td><EditAssignment data={assignments} onClose={fetchAssignments}/></td>
+                        <td><button type="button" margin="auto" onClick={deleteAssignment}>Delete</button></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            <AddAssignment onClose = {fetchAssignments}/>
           </div>
       </div>
     )
