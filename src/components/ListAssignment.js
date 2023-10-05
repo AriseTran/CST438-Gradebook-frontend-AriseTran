@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {SERVER_URL} from '../constants';
 import {Link} from 'react-router-dom';
-import editAssignment from "./EditAssignment";
 import AddAssignment from "./AddAssignment";
 import EditAssignment from "./EditAssignment";
 
@@ -27,62 +26,58 @@ function ListAssignment(props) {
     .catch(err => console.error(err)); 
   }
 
-  const deleteAssignment = (event) => {
-      setMessage('');
-      const row_id = event.target.parentNode.parentNode.rowIndex - 1;
-
-      const assignmentId = assignments[row_id].id;
-
-      if(window.confirm('Are you sure you want to delete this assignment?')){
-          fetch(`${SERVER_URL}/assignment/${assignmentId}`, {
-              method: 'DELETE',
-          })
-              .then((response) => {
-                  if(response.ok){
-                      setMessage('Assignment Deleted');
-                      fetchAssignments();
-                  }else{
-                      console.error('Error deleting assignment: ', response.status);
-                  }
-          })
-              .catch((error) => {
-                  console.error('Error deleting assignment: ', error);
-              });
-      }
-  };
+    const deleteAssignment = (event) => {
+        const row_id = event.target.parentNode.parentNode.rowIndex - 1;
+        const id = assignments[row_id].id;
+        console.log("delete assignment "+id);
+        fetch(`${SERVER_URL}/assignment/${id}`,
+            {
+                method: 'DELETE',
+            }
+        )
+            .then((response) => {
+                if (response.ok) {
+                    setMessage('Assignment deleted.');
+                    fetchAssignments();
+                } else {
+                    setMessage("Assignment delete failed.");
+                }
+            } )
+            .catch((err) =>  { setMessage('Error. '+err) } );
+    }
   
   
     const headers = ['Assignment Name', 'Course Title', 'Due Date', ' ', ' ', ' '];
-    
+
     return (
-      <div>
-        <h3>Assignments</h3>
-        <div margin="auto" >
-          <h4>{message}&nbsp;</h4>
-              <table className="Center"> 
-                <thead>
-                  <tr>
-                    {headers.map((title, idx) => (<th key={idx}>{title}</th>))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {assignments.map((row, idx) => (
-                    <tr key={idx}>
-                      <td>{row.assignmentName}</td>
-                      <td>{row.courseTitle}</td>
-                      <td>{row.dueDate}</td>
-                      <td>
-                        <Link to={`/gradeAssignment/${assignments[idx].id}`} >Grade</Link>
-                      </td>
-                        <td><EditAssignment data={assignments} onClose={fetchAssignments}/></td>
-                        <td><button type="button" margin="auto" onClick={deleteAssignment}>Delete</button></td>
+        <div>
+            <h3>Assignments</h3>
+            <div margin="auto" >
+                <h4>{message}&nbsp;</h4>
+                <table className="Center">
+                    <thead>
+                    <tr>
+                        {headers.map((title, idx) => (<th key={idx}>{title}</th>))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            <AddAssignment onClose = {fetchAssignments}/>
-          </div>
-      </div>
+                    </thead>
+                    <tbody>
+                    {assignments.map((row, idx) => (
+                        <tr key={idx}>
+                            <td>{row.assignmentName}</td>
+                            <td>{row.courseTitle}</td>
+                            <td>{row.dueDate}</td>
+                            <td>
+                                <Link to={`/gradeAssignment/${assignments[idx].id}`} >Grade</Link>
+                            </td>
+                            <td><EditAssignment assignment={assignments[idx]} onClose={fetchAssignments} /></td>
+                            <td><button type="button" margin="auto" onClick={deleteAssignment}>Delete</button></td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+                <AddAssignment onClose={fetchAssignments}/>
+            </div>
+        </div>
     )
 }  
 
