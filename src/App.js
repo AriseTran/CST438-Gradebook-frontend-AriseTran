@@ -10,7 +10,8 @@ function App() {
       <BrowserRouter>
           <div>
             <Switch>
-              <Route exact path="/" component={ListAssignment} />
+                <Route exact path="/" component={Login} />
+              <Route exact path="/listAssignment" component={ListAssignment} />
               <Route path="/gradeAssignment" component={GradeAssignment} />
               <Route render={ () => <h1>Page not found</h1>} />
             </Switch>

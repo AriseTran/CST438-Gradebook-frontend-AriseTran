@@ -6,7 +6,6 @@ import EditAssignment from "./EditAssignment";
 
 
 function ListAssignment(props) {
-
   const [assignments, setAssignments] = useState([]);
   const [message, setMessage] = useState('');
 
