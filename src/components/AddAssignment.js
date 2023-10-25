@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {SERVER_URL} from '../constants'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -9,7 +9,6 @@ import TextField from '@mui/material/TextField';
 
 
 function AddAssignment(props) {
-
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
     const [assignment, setAssignment] = useState({ assignmentName:'', dueDate:'', courseId: '' });

@@ -10,17 +10,23 @@ function Login() {
         setUser({...user, [event.target.name] : event.target.value});
     };
 
-    const handleLogin = () => {
+    const isInstructor = (email) => {
+        return email.includes("dwisneski");
+    };
+
+    const login = () => {
         fetch(`${SERVER_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user),
         })
             .then((response) => {
-                const jwtToken = response.headers.get('Authorization');
-                if (jwtToken !== null) {
+                const userEmail = user.username;
+                if (isInstructor(userEmail)) {
                     sessionStorage.setItem("jwt", jwtToken);
                     setAuth(true);
+                } else {
+                    console.log("User is not an instructor.");
                 }
             })
             .catch(err => console.log(err));
@@ -34,7 +40,7 @@ function Login() {
                     <tbody>
                     <tr>
                         <td>
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="username">Email</label>
                         </td>
                         <td>
                             <input type="text" name="username" value={user.username} onChange={onChange} />
